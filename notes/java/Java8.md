@@ -3,7 +3,7 @@
 The method by which we represent anonymous function in Java 8 is called lambda expression.
 
 ```java
-() -> { System.out.println("Hello World); };
+() -> { System.out.println("Hello World"); };
 ```
 
 lambda expression can be only writeen for function interface. Since functional interface has only one unimplemented method, Java figures out that anonymous function we are trying to write using lambda expression is for that unimplemented function. If there are are more than one unimplemented function then Java wont be able to figure it out since we do noy provide function name in lambda expression.
@@ -70,6 +70,14 @@ List<Book> books = BookDAO.getBook();
 Collection.sort(books, (a, b) -> a1.getName().compareTo(b.getName()));
 return books;
 ```
+
+## Consumer, Predicate and Supplier Functional Interface
+
+### Consumer
+Consumer is a functional interface introduced in Java 8 where we want to accept some value and perform some operation on it without returning anything.
+
+It has void accept(T t) function which we can usning using lamba expression.
+
 
 
 
