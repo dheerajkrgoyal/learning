@@ -71,12 +71,58 @@ Collection.sort(books, (a, b) -> a1.getName().compareTo(b.getName()));
 return books;
 ```
 
-## Consumer, Predicate and Supplier Functional Interface
+## Consumer, Predicate, Supplier and Function Functional Interface
 
 ### Consumer
 Consumer is a functional interface introduced in Java 8 where we want to accept some value and perform some operation on it without returning anything.
 
-It has void accept(T t) function which we can usning using lamba expression.
+It has `void accept(T t)` function which we implement, using lamba expression.
+
+```java
+Consumer consumer = (t) -> System.out.println(t)
+consumer.accept(10); //will print 10
+```
+
+Example: forEach function uses consumer interface in java streams.
+
+### Predicate
+Predicate is a functional interface where want to accept some value and return true/false.
+
+It has `boolean test(T t)` function  which we implement using lambda expresison.
+
+```java
+Predicate predicate = (t) -> t%2 == 0
+predicate.test(4) //will return true
+predicate.test(3) //will return false 
+```
+
+Example: filter uses predicate interface in java stream.
+
+### Supplier
+Supplier is a functional interface which does not accept anything but return something.
+
+It has `T get()` function which we implement using lambda expression.
+
+```java 
+Supplier supplier = () -> return 1;
+suuplier.get() //will return 1
+```
+
+Example: orElseGet function uses supplier interface in java streams.
+
+### Function
+Function is a functional interface which accepts value in parameter, may be apply some transformation and return the value.
+
+It has `R apply(T t)` function which we implement using lambda expression.
+
+```java
+Function function = (a) -> i*2;
+function.apply(2);  //will return 4
+```
+
+Example: map function in stream uses Function Interface.
+
+
 
 
 
