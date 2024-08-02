@@ -200,10 +200,10 @@ Both `map()` and `flatMap()` returns another stream after applying transformatio
  * }
  * */
 
- List<Customer> listOfCustomer = CustomerDAO.getCustomers();
+List<Customer> listOfCustomer = CustomerDAO.getCustomers();
 
- //Get list of emails from list of customers
- listOfCustomer.stream().map(cust -> cust.getEmail()).collect(Collectors.toList());
+//Get list of emails from list of customers
+listOfCustomer.stream().map(cust -> cust.getEmail()).collect(Collectors.toList());
 
  //Get list of phone numbers
 List<List<String>> phoneNumbers = listOfCustomer.stream().map(cust -> cust.getPhoneNumbers()).collect(Collectors.toList());  //we will get list of list here
@@ -312,4 +312,17 @@ employees.stream()
     .mapToDouble(i -> i)
     .average()
     .getAsDouble();
+```
+
+## Parallel Stream
+
+It utilizes multiple core of the processor.
+By default, streams are sequential and are run in single core. But we can divide the stream into chunks and process them into multiple cores and accumulate result automatically using parallel stream.
+
+However, the order of execution is not under our control.
+
+```java
+List<Integer> list = Arrays.asList(2, 3, 6, 4, 1, 8);
+
+list.parallelStream().mapToInt(i -> i).average();
 ```
