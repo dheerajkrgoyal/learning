@@ -11,6 +11,13 @@ lambda expression can be only writeen for function interface. Since functional i
 ### So What is Function Interface?
 
 Functional interface is the interface which has one abstract method but it can have multiple static and default methods.
+
+Before Java 8, interfaces were very strict. We were only allowed to add abstract methods in it. If someone add a new method, it violates the contract for all its implementations and everyone will have to overrride the new method. But Java8 wanted to introduce stream functionality in collection interface with backward compatibility. That is why they changed the way how we write interface. This is called interface evolution.
+So we can write a default method or static method in interfaces, still it wont violate any implementation contract.
+
+By introducing static methods in interface, we do not need to create sepearte utility class like Collections.
+We can have utility functions inside interface only now.
+
 We usually annotate functional interface usning @FunctionalInterface , but it is not mandatory.
 
 Example: Runannble, Callable, Comparator, Comparable.
@@ -325,4 +332,65 @@ However, the order of execution is not under our control.
 List<Integer> list = Arrays.asList(2, 3, 6, 4, 1, 8);
 
 list.parallelStream().mapToInt(i -> i).average();
+```
+
+## Exercises
+
+```java
+/**
+ * class Book {
+ *  private String title;
+ *  private List<Author> authors;
+ *  private int pages;
+ *  private Subject subject;
+ *  private int year;
+ *  private String isbn;
+ * }
+**/
+
+List<Book> list = BookDAO.getBooks();
+
+//print all books
+list.stream().forEach(System.out::println);
+
+//find books with more than 400 pages
+list.stream().filter(b -> b.getPages() > 400).toList();
+
+//find all the java books more than 400 pages
+list.stream.filter(b -> b.getSubject() == Subject.JAVA).filter(b -> b.getPages() > 400).toList();
+
+//Get top 3 longest books
+list.stream().sorted(Compartor.comparing(Book::getPages).reversed()).limit(3).toList();
+
+//Get all the books sorted by pages in descending order from 4th book onward
+list.stream().sorted(Comparator.comparing(Book::getPages).reversed()).skip(3).toList();
+
+//Get all the publishing years
+list.stream().map(Book::getYear).toList();
+
+//Print all the authors
+list.stream().flatMap(b -> b.getAuthors().stream()).forEach(System.out::println);
+
+//Print the unique countries of all authors
+list.stream().flatMap(b -> b.getAuthors().stream()).map(Author::getCountry).distinct().forEach(System.out::println);
+
+//Find the most recent book published
+list.stream().sorted(Comparator.comparing(Book::getYear).reversed()).limit(1).findFirst().get();
+//or
+list.stream().max(Comparator.comparing(Book::getYear)).get();
+
+//Total no. of pages published for all books
+list.stream().maptoInt(Book::getPages).sum();
+
+//We want to know how many pages does longest book has
+list.stream().map(Book::getPages()).reduce(Integer::max);
+
+//We want to know average no. of pages of the books
+list.stream().collect(Collectors.averagingDouble(Book::getPages));
+
+//We want map of book per year
+list.stream().collect(Collectors.groupingBy(Book::getYear));
+
+//We want to count how many books are published per year
+list.stream().collect(Collectors.groupingBy(Book::getYear, Collectors.counting()));
 ```
