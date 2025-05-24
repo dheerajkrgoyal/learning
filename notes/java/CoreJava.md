@@ -208,3 +208,144 @@ By contrast, ASCII, used in C/C++, is limited to 1 byte (8 bits), supporting onl
 | **Declared As Static** | Not allowed         | Not applicable                | Must be declared `static`       |
 
 
+### What are the 4 pillars of OOPs?
+
+The four fundamental principles of Object-Oriented Programming (OOP) are commonly referred to as the "Four Pillars of OOP." They are:
+
+#### Encapsulation:
+
+1. Encapsulation refers to the bundling of data (attributes or properties) and methods (functions or procedures) that operate on the data into a single unit, called a class.
+2. It allows the internal state of an object to be hidden from outside interference and accessed only through well-defined interfaces (public methods).
+3. Encapsulation provides data protection, abstraction, and modularity, enhancing code maintainability and reusability.
+
+#### Inheritance:
+
+1. Inheritance is a mechanism that allows a class (subclass or derived class) to inherit properties and behavior (methods) from another class (superclass or base class).
+2. It promotes code reuse by enabling subclasses to inherit and extend the functionality defined in their superclass.
+3. Inheritance facilitates the creation of a hierarchy of classes with specialized behavior, promoting code organization and scalability.
+
+#### Polymorphism:
+
+1. Polymorphism enables objects to be treated as instances of their superclass, allowing them to take on multiple forms.
+2. It allows different objects to respond to the same message (method call) in different ways, based on their specific implementations.
+3. Polymorphism simplifies code by allowing methods to be written to work with objects of a superclass, without needing to know the exact subclass at compile time.
+4. Polymorphism is achieved through method overriding and method overloading.
+
+#### Abstraction:
+
+1. Abstraction involves simplifying complex systems by focusing on the essential properties while hiding unnecessary details.
+2. It allows developers to create abstract classes and interfaces to define common behavior without specifying implementation details.
+3. Abstraction helps in managing complexity, improving code maintainability, and promoting code reuse by providing a clear separation between interface and implementation.
+
+### What is Compile Time Polymorphism and Runtime Polymorphism?
+
+#### Compile-Time Polymorphism (Static Binding):
+
+1. Compile-time polymorphism occurs when the decision about which method to call is made at compile time based on the method signature.
+2. It is achieved through method overloading, where multiple methods with the same name but different parameter lists (number or type of parameters) are defined within the same class.
+3. The compiler determines the appropriate method to invoke based on the number and types of arguments provided in the method call.
+4. Compile-time polymorphism is also known as static binding because the method call is resolved at compile time and cannot be changed at runtime.
+
+```java
+lass Calculator {
+    // Method overloading
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        int result1 = calc.add(2, 3);          // Calls int add(int a, int b)
+        double result2 = calc.add(2.5, 3.5);   // Calls double add(double a, double b)
+    }
+}
+```
+
+#### Runtime Polymorphism (Dynamic Binding):
+
+1. Runtime polymorphism occurs when the decision about which method to call is made at runtime based on the actual type of the object.
+2. It is achieved through method overriding, where a subclass provides a specific implementation of a method that is already defined in its superclass.
+3. The JVM determines the appropriate method to invoke based on the actual object type (not the reference type) at runtime.
+4. Runtime polymorphism allows for flexibility and extensibility in object-oriented designs, as it enables subclass objects to exhibit behavior specific to their type.
+
+```java
+class Animal {
+    void sound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void sound() {
+        System.out.println("Dog barks");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Dog();  // Upcasting
+        animal.sound();             // Calls Dog's overridden method
+    }
+}
+```
+
+### What is diamond problem in Java?
+
+The diamond problem occurs when a class inherits from two or more classes, each of which inherits from the same superclass. This creates a diamond-shaped inheritance hierarchy, where a subclass inherits the same superclass through multiple paths.
+
+The problem arises when the subclass attempts to inherit or override a method from the common superclass. In such cases, the compiler may not be able to determine which version of the method to use, leading to ambiguity and potential conflicts.
+
+  A
+ / \
+ B C
+ \ /
+  D
+
+In this diamond-shaped inheritance hierarchy, both classes B and C inherit from class A, and class D inherits from both B and C. If class A has a method foo(), and classes B and C override foo() with different implementations, the compiler may not be able to determine which version of foo() to use in class D.
+
+In Java, the diamond problem is avoided by allowing single inheritance of classes and supporting multiple inheritance only through interfaces. Interfaces do not contain any implementation, so there is no ambiguity in method resolution. 
+
+### What is difference between abstract class and interface?
+
+Abstract classes and interfaces are both used to achieve abstraction and define contracts for classes in Java, but they have some key differences:
+
+#### Abstract Class:
+
+1. An abstract class is a class that cannot be instantiated on its own and may contain abstract methods (methods without implementation) as well as concrete methods (methods with implementation).
+2. Abstract classes can have constructors, instance variables, and non-abstract methods, in addition to abstract methods.
+3. A subclass must provide implementations for all abstract methods defined in its abstract superclass, or it must itself be declared abstract.
+4. Abstract classes are used to define common behavior and characteristics shared among subclasses, serving as a blueprint for creating concrete subclasses.
+
+#### Interface:
+
+1. An interface is a reference type similar to a class but contains only abstract methods, constants (static final fields), and default/static methods (methods with default implementations).
+2. Interfaces cannot have constructors or instance variables, only method signatures.
+3. A class implements an interface by providing concrete implementations for all the methods declared in the interface.
+4. Interfaces are used to define contracts that classes can choose to implement, enabling multiple inheritance of type (a class can implement multiple interfaces).
+
+### When to use abstract class VS when to use interface?
+
+#### Use Interface When:
+
+1. A is capable of [doing this] scenario fits in your requirement. For example: below Programmable interface is capable of doing Programming
+interface Programmable {
+        void programming();
+}
+2. You want to define a contract for classes to implement: Interfaces specify a set of methods that implementing classes must provide, defining a clear contract for how classes interact with each other.
+3. You want to achieve multiple inheritance of type: Classes can implement multiple interfaces, allowing them to inherit behavior from multiple sources without the restrictions of single inheritance.
+4. You want to decouple implementation from interface: Interfaces provide a way to separate the specification of behavior from its implementation, promoting loose coupling and flexibility in design.
+
+#### Use Abstract Class When:
+
+1. A is B or C is B scenario fits in your requirement, for example: Dog is Animal, Cat is Animal..etc.
+2. You want to provide a common base implementation for subclasses: Abstract classes can contain both abstract and concrete methods, allowing you to define common behavior that subclasses can inherit.
+3. You want to define a class hierarchy: Abstract classes are useful for creating a hierarchical structure of classes where each subclass represents a more specialized version of the superclass.
+4. You want to share code among closely related classes: Abstract classes can contain state and behavior that is common to multiple subclasses, reducing code duplication.
+
