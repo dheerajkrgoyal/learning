@@ -171,7 +171,7 @@ Classes and Objects: Represent complex structures with attributes and methods.
 
 #### What are the 8 primitive data types in Java, and what does each represent?
 
-| DataType | Size (in bytes) | Default Value | Range                                                           | Example Literal        |
+| Data Type| Size (in bytes) | Default Value | Range                                                           | Example Literal        |
 |----------|-----------------|---------------|-----------------------------------------------------------------|------------------------|
 | `byte`   | 1               | `0`           | -128 to 127                                                     | `(byte) 100`           |
 | `short`  | 2               | `0`           | -32,768 to 32,767                                               | `(short) 20000`        |
@@ -181,3 +181,11 @@ Classes and Objects: Represent complex structures with attributes and methods.
 | `double` | 8               | `0.0d`        | Approximately ±1.79769313486231570E+308 (15 significant decimal digits) | `3.14159` or `2.71828d` |
 | `char`   | 2               | `'\u0000'`    | 0 to 65,535 (Unicode characters)                                | `'A'` or `'\u0041'`    |
 | `boolean`| JVM specific (logically 1 bit) | `false`       | `true` or `false`                                               | `true` or `false`      |   
+
+
+### Why does char use 2 bytes in Java, and not 1 byte like in C/C++?
+
+Java uses the Unicode system to support characters from all languages worldwide (e.g., Latin, Greek, Chinese).
+But Unicode requires 2 bytes (16 bits) to represent all possible characters.
+By contrast, ASCII, used in C/C++, is limited to 1 byte (8 bits), supporting only 256 characters.
+
