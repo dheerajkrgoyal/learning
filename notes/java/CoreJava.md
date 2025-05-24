@@ -302,12 +302,6 @@ The diamond problem occurs when a class inherits from two or more classes, each 
 
 The problem arises when the subclass attempts to inherit or override a method from the common superclass. In such cases, the compiler may not be able to determine which version of the method to use, leading to ambiguity and potential conflicts.
 
-  A
- / \
- B C
- \ /
-  D
-
 In this diamond-shaped inheritance hierarchy, both classes B and C inherit from class A, and class D inherits from both B and C. If class A has a method foo(), and classes B and C override foo() with different implementations, the compiler may not be able to determine which version of foo() to use in class D.
 
 In Java, the diamond problem is avoided by allowing single inheritance of classes and supporting multiple inheritance only through interfaces. Interfaces do not contain any implementation, so there is no ambiguity in method resolution. 
@@ -348,4 +342,168 @@ interface Programmable {
 2. You want to provide a common base implementation for subclasses: Abstract classes can contain both abstract and concrete methods, allowing you to define common behavior that subclasses can inherit.
 3. You want to define a class hierarchy: Abstract classes are useful for creating a hierarchical structure of classes where each subclass represents a more specialized version of the superclass.
 4. You want to share code among closely related classes: Abstract classes can contain state and behavior that is common to multiple subclasses, reducing code duplication.
+
+### How try/catch/finally works in Java?
+
+In Java, the try, catch, and finally blocks are used for exception handling, allowing you to gracefully manage errors that might occur during the execution of your code.
+
+Here's how they work:
+
+1. try: This block encloses the code that you want to monitor for exceptions. If an exception occurs within this block, it is thrown.
+
+2. catch: This block catches exceptions that are thrown within the corresponding try block. You can specify which type of exception you want to catch by specifying the exception type in the catch block. You can have multiple catch blocks to handle different types of exceptions.
+
+3. finally: This block, if present, is executed regardless of whether an exception is thrown or not. It's typically used to perform cleanup tasks, like closing file handles or releasing other resources, that should always occur, whether an exception is thrown or not.
+
+#### What are the scenarios in which finally block will not get executed?
+
+In Java, the finally block is designed to execute regardless of whether an exception is thrown or not. However, there are a few scenarios in which the finally block may not get executed:
+
+1. System.exit():
+If the JVM terminates abruptly due to a call to System.exit(), the finally block will not get executed. This is because System.exit() immediately terminates the JVM and does not allow any further code execution.
+
+2. Infinite loop:
+If the try or catch block contains an infinite loop or some other code that prevents control from reaching the finally block, then the finally block will not be executed until the loop terminates or control is transferred out of the block.
+
+3. Fatal errors:
+If a fatal error occurs, such as a StackOverflowError or an OutOfMemoryError, the JVM may terminate abruptly without executing the finally block.
+
+In all other scenarios, the finally block should execute as expected, even if an exception is thrown or caught within the try block.
+
+#### How to use try-with-resources in Java?
+
+Try-with-resources is a feature for automatic resource management. It's used to automatically close resources that implement the AutoCloseable interface, such as streams, database connections, or sockets, at the end of a try block.
+
+In below code example, the FileReader is automatically closed at the end of the try block, even if an exception is thrown while reading from the file.
+
+```java
+try (FileReader fileReader = new FileReader("example.txt")) {
+    // Code that reads from the file
+    int data = fileReader.read();
+    while (data != -1) {
+        System.out.print((char) data);
+        data = fileReader.read();
+    }
+} catch (IOException e) {
+    // Exception handling
+    e.printStackTrace();
+}
+```
+
+### What Is the Difference Between a Checked and an Unchecked Exception?
+
+#### Checked Exceptions:
+
+1. Checked exceptions are subclasses of Exception (excluding RuntimeException and its subclasses).
+2. They must be either caught or declared to be thrown by the method using the throws keyword.
+3. Examples of checked exceptions include IOException, ClassNotFoundException, and SQLException.
+4. The compiler enforces handling of checked exceptions, which means that you must either catch them or declare that your method throws them. This helps to ensure that developers are aware of potential exceptional conditions and take appropriate action.
+
+#### UncheckedExceptions (RuntimeExceptions):
+
+1. Unchecked exceptions are subclasses of RuntimeException.
+2. They do not need to be explicitly caught or declared by the method using the throws keyword.
+3. Examples of unchecked exceptions include NullPointerException, ArrayIndexOutOfBoundsException, and ArithmeticException.
+4. The compiler does not enforce handling of unchecked exceptions. This means that it's up to the developer to write code to handle or prevent them if necessary, but it's not mandatory to do so.
+5. Unchecked exceptions often represent programming errors or unexpected conditions that may occur at runtime, rather than conditions that can be reasonably anticipated and handled by the code.
+
+
+### What Is the Difference Between an Error and Exception?
+
+In Java, both errors and exceptions are subclasses of the Throwable class, but they serve different purposes and are meant to be handled differently:
+
+#### Exception:
+
+1. Exceptions represent exceptional conditions that occur during the execution of a program. They are typically caused by problems that are outside the control of the program, such as invalid input, network issues, or file I/O errors.
+2. Exceptions can be checked or unchecked. Checked exceptions must be either caught or declared in the method signature using the throws keyword, while unchecked exceptions do not need to be caught or declared.
+3. Examples of exceptions include IOException, NullPointerException, ArrayIndexOutOfBoundsException, etc.
+
+#### Error:
+
+1. Errors represent abnormal conditions that occur in the Java Virtual Machine (JVM) or in the runtime environment, which are typically not recoverable by the application itself.
+2. Errors are typically caused by serious problems that are beyond the control of the programmer, such as system failures, out-of-memory errors, or stack overflow errors.
+3. Errors are unchecked, which means they do not need to be caught or declared by the programmer. In fact, it's generally not recommended to catch errors because they often indicate serious problems that the application cannot recover from.
+4. Examples of errors include OutOfMemoryError, StackOverflowError, VirtualMachineError, etc.
+
+### How can you create a custom exception in Java?
+
+To create a custom exception in Java, you need to create a new class that extends either Exception (for checked exceptions) or RuntimeException (for unchecked exceptions).
+
+```java
+//example of creating a custom checked exception
+//Define the custom exception
+public class CustomCheckedException extends Exception {
+    // Constructor that accepts a message
+    public CustomCheckedException(String message) {
+        super(message);
+    }
+
+    // Constructor that accepts a message and a cause
+    public CustomCheckedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    // Constructor that accepts a cause
+    public CustomCheckedException(Throwable cause) {
+        super(cause);
+    }
+}
+```
+
+### What is Java Garbage Collection and how does it work?
+
+Java Garbage Collection (GC) is the process by which Java programs perform automatic memory management. The Java runtime environment deletes objects when they are no longer in use to free up memory. This is done automatically by the garbage collector, which is part of the Java Virtual Machine (JVM).
+
+GC is essential in long-running server applications to prevent memory leaks and ensure efficient memory usage.
+
+Java provides several garbage collection algorithms:
+
+1. Serial GC: Uses a single thread to perform all garbage collection work, suitable for single-threaded applications.
+2. Parallel GC: Uses multiple threads for garbage collection, suitable for multi-threaded applications.
+3. CMS (Concurrent Mark-Sweep) GC: Performs most of the garbage collection concurrently with the application threads to minimize pause times.
+4. G1 (Garbage-First) GC: Divides the heap into regions and prioritizes reclaiming regions with the most garbage.
+
+
+Here's a breakdown of the typical process:
+
+1. Object Allocation: When you create an object using the new keyword, memory is allocated for it on the heap.
+
+2. Reachability (GC Roots): The GC determines which objects are "live" by starting from a set of known "GC Roots." These roots are special references that are always considered reachable, such as:
+    * Local variables on the stack of active threads.
+    * Static variables.
+    * Active Java threads themselves.
+    * JNI (Java Native Interface) references.
+
+3. Mark Phase: 
+    * Starting from the GC Roots, the garbage collector traverses the object graph.
+    * It identifies and "marks" all objects that are reachable (directly or indirectly) from these roots as "live." Any object that cannot be reached from a GC root is considered eligible for garbage collection.
+
+4. Sweep Phase:
+    * After the marking phase, the garbage collector "sweeps" through the heap.
+    * It deallocates the memory occupied by all objects that were not marked as live. This memory is then made available for new object allocations.
+
+5. Compact Phase (Optional but common):
+    * After sweeping, memory can become fragmented (small, non-contiguous blocks of free space).
+    * To optimize for future allocations and prevent OutOfMemoryError due to fragmentation, some garbage collectors perform a "compact" phase. This involves moving live objects closer together, effectively defragmenting the heap.
+
+
+Modern JVMs use generational garbage collection to optimize the process, based on the empirical observation that most objects are short-lived. The heap is divided into different "generations":
+
+1. Young Generation:
+
+    * Eden Space: Where most new objects are initially allocated.
+    * Survivor Spaces (S0 and S1): Objects that survive a minor GC in the Eden space are moved to one of the survivor spaces. Objects are moved between survivor spaces in subsequent minor GCs.
+    * Minor GC (Young GC): Occurs frequently to collect garbage in the young generation. It's typically very fast because it deals with a smaller portion of the heap and most objects in this generation are short-lived.
+
+2. Old Generation (Tenured Space):
+
+    * Objects that survive multiple minor GC cycles in the young generation are promoted to the old generation. These are typically longer-lived objects.
+    * Major GC (Full GC): Occurs less frequently and cleans up the old generation. Full GCs are generally more time-consuming as they involve scanning a larger memory area.
+
+3. Metaspace (Java 8+):
+
+    * Replaced the PermGen space. Stores class metadata (class structures, method bytecode, static variables, etc.). This space is allocated from native memory (off-heap).
+
+
+
 
