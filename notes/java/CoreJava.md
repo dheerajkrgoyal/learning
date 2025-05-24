@@ -183,9 +183,28 @@ Classes and Objects: Represent complex structures with attributes and methods.
 | `boolean`| JVM specific (logically 1 bit) | `false`       | `true` or `false`                                               | `true` or `false`      |   
 
 
-### Why does char use 2 bytes in Java, and not 1 byte like in C/C++?
+#### Why does char use 2 bytes in Java, and not 1 byte like in C/C++?
 
 Java uses the Unicode system to support characters from all languages worldwide (e.g., Latin, Greek, Chinese).
 But Unicode requires 2 bytes (16 bits) to represent all possible characters.
 By contrast, ASCII, used in C/C++, is limited to 1 byte (8 bits), supporting only 256 characters.
+
+### What are wrapper classes in Java, and how do they relate to primitive types?
+
+1. Wrapper classes bridge the gap between primitive types and Java’s object-oriented nature.
+2. Wrapper classes in Java are object representations of the primitive data types.
+3. They allow primitive values to be treated as objects.
+4. They enable primitives to interact with collections and provide utility methods.
+5. Autoboxing and auto-unboxing simplify conversions between primitives and objects.
+6. Use cases: Collections (e.g., List<Integer> instead of List<int> (since collections work with objects)) and Utility methods (e.g., Integer.parseInt()).
+
+### What are the three types of variables in Java, and how are they different?
+
+| Feature            | Local Variable          | Instance Variable             | Static Variable                 |
+|--------------------|-------------------------|-------------------------------|---------------------------------|
+| **Scope** | Inside a method/block   | Specific to each instance     | Shared across all instances     |
+| **Default Value** | Must be initialized     | Gets default values           | Gets default values             |
+| **Memory Location**| Stack memory            | Heap memory                   | Method area (or Class memory)   |
+| **Declared As Static** | Not allowed         | Not applicable                | Must be declared `static`       |
+
 
