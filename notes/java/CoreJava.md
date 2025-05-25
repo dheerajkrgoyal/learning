@@ -578,4 +578,203 @@ G1 has two main ways it cleans:
 
     The beauty of G1 is that it breaks down the "big cleanup" into smaller, manageable pieces, and does most of the work while your program is running. This makes the "Stop-the-World" pauses much shorter and more predictable.
 
-    
+### What Is the Difference Between an Inner Class and a Static Nested Class?
+
+#### Inner Classes
+Inner classes are non-static nested classes. They have the following characteristics:
+
+1. Associated with an Instance:
+Inner classes are tied to an instance of the outer class. This means they can access the outer class's instance variables and methods directly.
+
+2. Syntax
+```java
+public class OuterClass {
+    class InnerClass {
+        // Inner class code
+    }
+}
+```
+
+3. Access to Outer Class Members:
+Inner classes have direct access to the outer class's instance members, including private ones.
+
+4. Instantiation:
+An inner class instance is created using an instance of the outer class:
+```java
+// Inner Class Example
+public class OuterClass {
+    private int outerField = 10;
+
+    class InnerClass {
+        void display() {
+            System.out.println("Outer field: " + outerField);
+        }
+    }
+
+    public static void main(String[] args) {
+        OuterClass outer = new OuterClass();
+        OuterClass.InnerClass inner = outer.new InnerClass();
+        inner.display(); // Output: Outer field: 10
+    }
+}
+```
+
+#### Static Nested Classes
+
+1. Not Associated with an Instance:
+Static nested classes do not have an implicit reference to an instance of the outer class. They can be instantiated without an instance of the outer class.
+
+2. Syntax
+```java
+// Static Nested Class Example:
+public class OuterClass {
+    private static int staticOuterField = 20;
+
+    static class StaticNestedClass {
+        void display() {
+            System.out.println("Static outer field: " + staticOuterField);
+        }
+    }
+
+    public static void main(String[] args) {
+        OuterClass.StaticNestedClass nested = new OuterClass.StaticNestedClass();
+        nested.display(); // Output: Static outer field: 20
+    }
+}
+```
+
+3. Access to Outer Class Members:
+Static nested classes can only access the static members of the outer class directly. To access instance members, they need an instance of the outer class.
+
+4. Instantiation:
+A static nested class instance is created without needing an instance of the outer class
+```java
+OuterClass.StaticNestedClass nested = new OuterClass.StaticNestedClass();
+```
+
+### What Is an Anonymous Class and what is it's Use Case?
+
+An anonymous class in Java is a type of inner class without a name. It is used to instantiate a class defined in the method body, usually for implementing an interface or extending a class with minor modifications. Anonymous classes are often used for short-lived implementations that are not reused elsewhere.
+
+1. Event Handling
+Commonly used in GUI applications for handling events (e.g., button clicks).
+
+```java
+mport javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class AnonymousClassExample {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Anonymous Class Example");
+        JButton button = new JButton("Click Me");
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Button was clicked!");
+            }
+        });
+
+        frame.add(button);
+        frame.setSize(300, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+```
+
+2. Thread Creation
+Simplifies thread creation without defining a separate class.
+
+```java
+public class AnonymousClassExample {
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Thread is running");
+            }
+        }).start();
+    }
+}
+```
+
+3. Customizing Behavior:
+Allows for quick customization of existing classes or interfaces.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class AnonymousClassExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>() {
+            @Override
+            public boolean add(String s) {
+                System.out.println("Adding element: " + s);
+                return super.add(s);
+            }
+        };
+
+        list.add("Hello");
+        list.add("World");
+    }
+}
+```
+
+### Marker Interface
+
+A marker interface in Java is an interface with no methods or constants. It serves as a means to signal to the JVM or other code that a class implementing this interface has a particular property or should be treated in a special way. Marker interfaces are used to provide metadata to objects.
+
+* Purpose of Marker Interfaces
+Marker interfaces are used for various purposes, including:
+1. Type Identification: Identifying the type of an object at runtime.
+2. Special Behavior: Indicating that a class should be processed in a special manner by certain Java APIs or libraries.
+3. Security and Serialization: Controlling the serialization mechanism or ensuring certain security measures.
+
+Examples of Marker Interfaces in Java: Serializable, Cloneable
+
+### What Is an Immutable Class and how to create it?
+
+An immutable class in Java is a class whose instances cannot be modified after they are created. Once an object is created, its state (fields) cannot be changed. Immutable objects are inherently thread-safe and can be shared freely among multiple threads without synchronization concerns.
+
+#### Characteristics of Immutable Classes
+1. Final Class:
+The class should be declared as final so that it cannot be subclassed.
+
+2. Private Final Fields:
+All fields should be declared as private and final to ensure they are not modified after initialization.
+
+3. No Setter Methods:
+The class should not provide any methods that modify fields or objects referred to by fields.
+
+```java
+import java.util.Date;
+
+public final class ImmutablePerson {
+    private final String name;
+    private final int age;
+    private final Date birthDate; // mutable object
+
+    public ImmutablePerson(String name, int age, Date birthDate) {
+        this.name = name;
+        this.age = age;
+        // Creating a defensive copy of the mutable Date object
+        this.birthDate = new Date(birthDate.getTime());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public Date getBirthDate() {
+        // Returning a defensive copy of the mutable Date object
+        return new Date(birthDate.getTime());
+    }
+}
+```
+
