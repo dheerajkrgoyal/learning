@@ -189,7 +189,9 @@ In database transactions, two queries trying to lock rows in different order can
 
 * Prevention Strategies:
 ✅ Consistent Lock Ordering: Always acquire locks in a fixed order (e.g., always lock Resource 1 → Resource 2 instead of randomly locking resources).
+
 ✅ Timeouts: Use tryLock() with a timeout to avoid indefinite waiting.
+
 ✅ Deadlock Detection: Implement a resource hierarchy or use a tool like ThreadMXBean in Java to detect deadlocks.
 
 #### Livelock
@@ -204,7 +206,9 @@ In distributed systems, multiple nodes retrying conflict resolution can lead to 
 
 * Prevention Strategies:
 ✅ Random Delays: Introduce a random wait time before retrying.
+
 ✅ Priority Inversion Handling: Ensure a fallback mechanism to break the cycle.
+
 ✅ Use Message Passing: Instead of retries, use a queue-based or event-driven approach to avoid unnecessary state changes.
 
 #### Starvation
@@ -218,7 +222,9 @@ In web servers, high-priority API requests may dominate CPU cycles, starving low
 
 * Prevention Strategies:
 ✅ Fair Scheduling Policies: Use ReentrantLock(true) for fair access to locks.
+
 ✅ Priority Adjustments: Dynamically adjust thread priorities if a thread is waiting too long.
+
 ✅ Avoid Starvation-Prone Algorithms: Implement fair resource allocation mechanisms like FIFO-based locks.
 
 ### Java Executor Service and type of threadpools which can be created with Java Executor service
