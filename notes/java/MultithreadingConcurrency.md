@@ -320,5 +320,307 @@ scheduledThreadPool.scheduleAtFixedRate(() ->
         0, 1, TimeUnit.SECONDS);
 ```
 
+### Difference between Executor and ExecutorService
 
+Executor: It is a simple interface in Java that provides a way to decouple task submission from task execution. It defines a single method, execute(Runnable command), which executes the given command in a thread pool.
+
+ExecutorService: It is a subinterface of Executor that represents a more complete version of the Executor, providing methods to manage the lifecycle of the thread pool, submit tasks for execution, and obtain Futures representing task results.
+
+* Lifecycle Management:
+
+Executor: It does not provide methods for managing the lifecycle of the underlying thread pool. It only provides a way to execute tasks.
+
+ExecutorService: It extends Executor and adds methods for managing the lifecycle of the thread pool, such as shutdown(), shutdownNow(), and awaitTermination().
+
+* Task Submission and Execution:
+
+Both Executor and ExecutorService provide methods to submit tasks for execution (execute(Runnable command) in Executor, submit(Runnable task) and submit(Callable<T> task) in ExecutorService).
+
+* Task Result Handling:
+
+Executor: It does not provide a way to obtain the result of a task execution directly.
+
+ExecutorService: It provides methods to submit tasks that return a Future representing the result of the task execution (submit(Callable<T> task)). It also allows for task result retrieval through the Future interface.
+
+* Termination:
+
+Executor: It does not provide methods for terminating the thread pool.
+
+ExecutorService: It provides methods to gracefully shut down the thread pool (shutdown()), forcibly shut down the thread pool (shutdownNow()), and await termination of all tasks (awaitTermination()).
+
+### Producer Consumer Problem
+
+The Producer-Consumer problem is a classic synchronization problem in concurrent programming, where there are two types of threads: producers and consumers. Producers generate data or items, and consumers consume or process these items.
+
+The challenge is to ensure that producers do not produce items when the buffer is full, and consumers do not consume items when the buffer is empty. It requires efficient coordination and synchronization between producers and consumers to avoid race conditions and ensure proper resource management.
+
+One effective solution to this problem is using the BlockingQueue interface in Java, which provides a thread-safe queue implementation with blocking operations.
+
+```java
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+public class ProducerConsumerExample {
+    private static final int BUFFER_SIZE = 10;
+    private static BlockingQueue<Integer> buffer = new ArrayBlockingQueue<>(BUFFER_SIZE);
+
+    public static void main(String[] args) {
+        Thread producerThread = new Thread(new Producer());
+        Thread consumerThread = new Thread(new Consumer());
+
+        producerThread.start();
+        consumerThread.start();
+    }
+
+    static class Producer implements Runnable {
+        public void run() {
+            try {
+                int item = 1;
+                while (true) {
+                    // Produce item
+                    buffer.put(item++);
+
+                    System.out.println("Produced item: " + (item - 1));
+                    Thread.sleep(1000); // Simulate production time
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    static class Consumer implements Runnable {
+        public void run() {
+            try {
+                while (true) {
+                    // Consume item
+                    int item = buffer.take();
+
+                    System.out.println("Consumed item: " + item);
+                    Thread.sleep(2000); // Simulate processing time
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+```
+
+If we do not want to use blocking queue, lets say we are going with simple ArrayList which is shared across producer and consumer thread and we need to manually handle synchronization problem using synchronized, wait and notifyAll methods.
+
+### ThreadLocal and its Advantages
+
+ThreadLocal is a class in Java that provides thread-local objects. Each thread accessing a ThreadLocal objects has its own, independently initialized copy of the object. ThreadLocal objects are typically used to store data that is specific to a particular thread and should not be shared among multiple threads.
+
+#### Advantages of Using ThreadLocal
+
+Thread Isolation: ThreadLocal provides thread isolation by maintaining separate copies of objects for each thread. This prevents concurrent threads from accessing or modifying each other's data, enhancing thread safety and avoiding race conditions.
+
+Reduced Synchronization Overhead: Since each thread has its own copy of ThreadLocal objects, there is no need for explicit synchronization mechanisms like locks or atomic operations when accessing these objects. This can lead to improved performance and scalability in multi-threaded applications.
+
+Avoids Memory Leaks: ThreadLocal objects are garbage collected along with the thread that owns them. This helps in preventing memory leaks that may occur when using shared resources across multiple threads, as the resources are automatically released when the thread terminates.
+
+Contextual Data Storage: ThreadLocal objects are often used to store contextual data related to the current thread's execution context. This can include user sessions, transaction contexts, request-specific data in web applications, and more. Using ThreadLocal makes it easy to access and manage such contextual data within the thread. Example in Spring we have RequestContextHolder(store request releated parameters), SecurityContextHolder (store user information), TransactionContextHolder (store DB related information) etc.
+
+Watch: https://www.youtube.com/watch?v=sjMe9aecW_A
+
+### Virtual Thread in Java 21
+
+Virtual Threads are lightweight, user-mode threads managed by the Java Virtual Machine (JVM). Unlike traditional OS threads (kernel threads), virtual threads are managed entirely by the JVM and can be created and scheduled more efficiently.
+
+Virtual threads are lightweight compared to traditional OS threads, requiring fewer system resources for creation and management. This makes them suitable for applications with a large number of concurrent tasks.
+
+Use virtual threads in high-throughput concurrent applications, especially those that consist of a great number of concurrent tasks that spend much of their time waiting. Server applications are examples of high-throughput applications because they typically handle many client requests that perform blocking I/O operations such as fetching resources.
+
+```java
+public static void main(String[] args) {
+
+    Thread virtualThread = Thread.startVirtualThread(() -> {
+        System.out.println("Running task with virtual thread: "
+                + Thread.currentThread().getName());
+    });
+
+    // Waiting for virtual threads to complete
+    try {
+        virtualThread.join();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+### What is the Fork/Join Framework in Java?
+
+The Fork/Join Framework is designed to efficiently parallelize divide-and-conquer algorithms, where a problem is recursively split into smaller independent subproblems, solved in parallel, and then combined to form the final result.
+
+* ForkJoinPool
+
+A specialized implementation of ExecutorService optimized for recursive parallelism.
+It manages a pool of worker threads and efficiently distributes tasks using work stealing.
+Unlike fixed-thread pools, it dynamically adjusts workload distribution for optimal CPU utilization.
+
+* ForkJoinTask
+
+A lightweight task that can be forked (split) into subtasks and joined (merged) once completed.
+ForkJoinTask is an abstract class, and its two main implementations are:
+1. RecursiveTask<T> → Returns a result.
+2. RecursiveAction → Performs an operation but does not return a result.
+
+* Work Stealing Algorithm 
+
+Instead of waiting for tasks, idle worker threads dynamically steal tasks from the tail of another thread’s deque (double-ended queue).
+This improves load balancing and ensures efficient parallel execution.
+
+How It Works (Workflow)
+
+1️. A main task is submitted to ForkJoinPool.
+2️. The task divides itself into smaller subtasks (forking).
+3️. Each subtask is executed independently in parallel.
+4️. Once all subtasks finish, their results are merged (joining) to get the final output.
+5️. If a worker thread runs out of tasks, it steals work from other busy threads.
+
+```java
+import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.ForkJoinPool;
+
+public class ForkJoinSumExample {
+    // Define a task to compute the sum of elements in a given range of an array
+    static class SumTask extends RecursiveTask<Integer> {
+        private static final int THRESHOLD = 10; // Threshold for splitting tasks
+        private int[] array;
+        private int start, end;
+
+        // Constructor to initialize the task with the array and range
+        public SumTask(int[] array, int start, int end) {
+            this.array = array;
+            this.start = start;
+            this.end = end;
+        }
+
+        // Override the compute() method to define the task logic
+        protected Integer compute() {
+            // If the range is small, compute the sum directly
+            if (end - start <= THRESHOLD) {
+                int sum = 0;
+                for (int i = start; i < end; i++)
+                    sum += array[i];
+                return sum;
+            } else {
+                // If the range is large, split the task into subtasks
+                int mid = (start + end) / 2;
+                SumTask leftTask = new SumTask(array, start, mid);
+                SumTask rightTask = new SumTask(array, mid, end);
+
+                // Fork the subtasks to execute in parallel
+                leftTask.fork();
+                rightTask.fork();
+
+                // Join the results of subtasks
+                return leftTask.join() + rightTask.join();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        // Create a ForkJoinPool with the default parallelism level
+        ForkJoinPool pool = ForkJoinPool.commonPool();
+
+        // Execute the main task and get the result
+        int result = pool.invoke(new SumTask(array, 0, array.length));
+
+        // Print the result
+        System.out.println("Sum: " + result);
+    }
+}
+```
+
+### Purpose of the Wait, Notify and Notifyall Methods
+
+The wait(), notify(), and notifyAll() methods in Java are used for inter-thread communication. They allow threads to wait for a certain condition to be met and then be notified when it is.
+
+* wait(), notify(), and notifyAll() must be called from within a synchronized block or method to ensure proper thread coordination and avoid race conditions.
+* These methods are used to implement the classic producer-consumer pattern, where producers produce data and notify consumers when data is available for consumption.
+* It's important to use these methods carefully to prevent potential issues such as deadlock or livelock.
+
+```java
+public class WaitNotifyExample {
+    private static final Object lock = new Object(); // Object used as a monitor for synchronization
+    private static boolean condition = false; // Shared condition variable
+
+    public static void main(String[] args) {
+        // Consumer thread
+        Thread consumerThread = new Thread(() -> {
+            synchronized (lock) {
+                while (!condition) { // Wait until condition is true
+                    try {
+                        lock.wait(); // Wait for notification
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // Condition is true, consume the resource
+                System.out.println("Consumer: Resource consumed");
+            }
+        });
+
+        // Producer thread
+        Thread producerThread = new Thread(() -> {
+            // Produce the resource
+            System.out.println("Producer: Resource produced");
+            synchronized (lock) {
+                condition = true; // Set condition to true
+                lock.notify(); // Notify waiting threads
+            }
+        });
+
+        // Start consumer and producer threads
+        consumerThread.start();
+        producerThread.start();
+    }
+}
+```
+
+### Purpose of the Thread.yield()
+
+When a thread calls yield(), it suggests that the scheduler should move it from the running state back to the runnable state, allowing other threads of the same or higher priority to execute.
+
+However, the exact behavior of Thread.yield() is platform-dependent and not guaranteed. It's up to the thread scheduler to decide whether to act on this hint or not, so it may not have any effect at all.
+
+### Purpose of Semaphore
+
+The purpose of Semaphore is to control access to a shared resource or a pool of resources by multiple threads concurrently. It provides a way to limit the number of threads that can access the resource simultaneously, thus preventing resource contention and managing concurrent access in a controlled manner.
+
+In below code example, each thread acquires a permit using semaphore.acquire() before accessing the shared resource and releases the permit using semaphore.release() after completing its work.
+
+As a result, only 2 threads are allowed to access the resource concurrently, while other threads wait for a permit to become available.
+
+```java
+import java.util.concurrent.Semaphore;
+
+public class SemaphoreExample {
+    private static final int NUM_THREADS = 5;
+    private static final Semaphore semaphore = new Semaphore(2); // Allow only 2 threads to access the resource simultaneously
+
+    public static void main(String[] args) {
+        // Create and start multiple threads
+        for (int i = 0; i < NUM_THREADS; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    semaphore.acquire(); // Acquire permit
+                    System.out.println(Thread.currentThread().getName() + " is accessing the resource");
+                    Thread.sleep(1000); // Simulate resource usage
+                    System.out.println(Thread.currentThread().getName() + " released the resource");
+                    semaphore.release(); // Release permit
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            thread.start();
+        }
+    }
+}
+```
 
