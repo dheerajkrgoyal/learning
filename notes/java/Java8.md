@@ -6,9 +6,9 @@ The method by which we represent anonymous function in Java 8 is called lambda e
 () -> { System.out.println("Hello World"); };
 ```
 
-lambda expression can be only writeen for function interface. Since functional interface has only one unimplemented method, Java figures out that anonymous function we are trying to write using lambda expression is for that unimplemented function. If there are are more than one unimplemented function then Java wont be able to figure it out since we do noy provide function name in lambda expression.
+lambda expression can be only written for functional interface. Since functional interface has only one unimplemented method, Java figures out that anonymous function we are trying to write using lambda expression is for that unimplemented function. If there are are more than one unimplemented function then Java wont be able to figure it out since we do noy provide function name in lambda expression.
 
-### So What is Function Interface?
+### So What is Functional Interface?
 
 Functional interface is the interface which has one abstract method but it can have multiple static and default methods.
 
@@ -58,11 +58,11 @@ public interface SumInterface{
     void sum(int a, int b);
 }
 
-SumInterface sumInterface = (a, b) -> retur a+b;   // we do not need return as well if there is single statement. (a, b) -> a +b;
+SumInterface sumInterface = (a, b) -> return a+b;   // we do not need return as well if there is single statement. (a, b) -> a +b;
 System.out.println(sumInterface.sum(1, 2));   //will print 3
 ```
 
-Let's see how we can use lambda expression using real-life example. Let's say we fetch List of Books from DB or API in our service layer and we want to return it by sorting the list using book name. We use Collections.sort() wehre we can pass comparator. Since we know Comparator is functional interface we can simply pass lambda expression in the Collections.sort() function.
+Let's see how we can use lambda expression using real-life example. Let's say we fetch List of Books from DB or API in our service layer and we want to return it by sorting the list using book name. We use Collections.sort() where we can pass comparator. Since we know Comparator is functional interface we can simply pass lambda expression in the Collections.sort() function.
 
 ```java
 /**
@@ -160,7 +160,7 @@ map.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(t -> System
 
 ```
 
-Let's seee with the real-life example:
+Let's see with the real-life example:
 
 ```java
 /**
@@ -173,7 +173,7 @@ Let's seee with the real-life example:
  * */
 
 List<Employee> listOfEmployee = EmployeeDAO.getEmployees();
-Map<Employee, Integer> mapOfEmployee = new HAshMap<>(); //Let's assume we have data in map
+Map<Employee, Integer> mapOfEmployee = new HashMap<>(); //Let's assume we have data in map
 
 //employees whose salary is more than 5 lakh
 lisOfEmployee.stream().filter(emp -> emp.ghetSalary() > 500000).collect(Collectors.toList()); //collect is a terminal function which will accumulate the result of peipeline in the list
@@ -224,7 +224,7 @@ List<String> phoneNumber = listOfCustomer.stream().flatMap(cust -> cust.getPhone
 Optional class was introduced in Java 8 to avoid null pointer exception as much as possible. It might happen that we are fetching some object from somewhere and that object is null. Before checking if that object is null we try to do some operation on that object and then we encounter null pointer exception during runtime.
 We might forget to check the null condition in the object may be because we dont expect it to be null. In such cases when object might be null Java tells that instead of returning the object, we should wrap the object with Optional and then send it. Then it becomes kind-of mandatory for us to check if the object is present or not.
 
-There are various ways to created Optionapl object.
+There are various ways to created Optional object.
 1. `Optional.empty()`: It will return empty Optional object.
 2. `Optional.of()`: We can pass our object inside `of(object)` if we are sure object is never null.
 3. `Optional.ofNullable()`: Similar to above except we can pass null object as well here. Optional class automatically checks if the passed object is null or not. If it is null it makes the Optional object empty.
